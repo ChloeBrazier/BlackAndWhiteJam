@@ -124,6 +124,14 @@
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": ""
+                },
+                {
+                    "name": "Film Strip",
+                    "type": "Button",
+                    "id": "15ff5dfe-f0ba-4840-8795-8f9879e86f23",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
                 }
             ],
             "bindings": [
@@ -135,6 +143,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "Screen doors",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "bf7e6deb-478d-45db-a5cb-0426426ea9e7",
+                    "path": "<Keyboard>/f",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Film Strip",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

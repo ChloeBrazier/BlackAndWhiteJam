@@ -137,6 +137,14 @@ public class @InputMap : IInputActionCollection, IDisposable
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
+                },
+                {
+                    ""name"": ""Film Strip"",
+                    ""type"": ""Button"",
+                    ""id"": ""15ff5dfe-f0ba-4840-8795-8f9879e86f23"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
                 }
             ],
             ""bindings"": [
@@ -148,6 +156,17 @@ public class @InputMap : IInputActionCollection, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Screen doors"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""bf7e6deb-478d-45db-a5cb-0426426ea9e7"",
+                    ""path"": ""<Keyboard>/f"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Film Strip"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -163,6 +182,7 @@ public class @InputMap : IInputActionCollection, IDisposable
         // Debug
         m_Debug = asset.FindActionMap("Debug", throwIfNotFound: true);
         m_Debug_Screendoors = m_Debug.FindAction("Screen doors", throwIfNotFound: true);
+        m_Debug_FilmStrip = m_Debug.FindAction("Film Strip", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -254,11 +274,13 @@ public class @InputMap : IInputActionCollection, IDisposable
     private readonly InputActionMap m_Debug;
     private IDebugActions m_DebugActionsCallbackInterface;
     private readonly InputAction m_Debug_Screendoors;
+    private readonly InputAction m_Debug_FilmStrip;
     public struct DebugActions
     {
         private @InputMap m_Wrapper;
         public DebugActions(@InputMap wrapper) { m_Wrapper = wrapper; }
         public InputAction @Screendoors => m_Wrapper.m_Debug_Screendoors;
+        public InputAction @FilmStrip => m_Wrapper.m_Debug_FilmStrip;
         public InputActionMap Get() { return m_Wrapper.m_Debug; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -271,6 +293,9 @@ public class @InputMap : IInputActionCollection, IDisposable
                 @Screendoors.started -= m_Wrapper.m_DebugActionsCallbackInterface.OnScreendoors;
                 @Screendoors.performed -= m_Wrapper.m_DebugActionsCallbackInterface.OnScreendoors;
                 @Screendoors.canceled -= m_Wrapper.m_DebugActionsCallbackInterface.OnScreendoors;
+                @FilmStrip.started -= m_Wrapper.m_DebugActionsCallbackInterface.OnFilmStrip;
+                @FilmStrip.performed -= m_Wrapper.m_DebugActionsCallbackInterface.OnFilmStrip;
+                @FilmStrip.canceled -= m_Wrapper.m_DebugActionsCallbackInterface.OnFilmStrip;
             }
             m_Wrapper.m_DebugActionsCallbackInterface = instance;
             if (instance != null)
@@ -278,6 +303,9 @@ public class @InputMap : IInputActionCollection, IDisposable
                 @Screendoors.started += instance.OnScreendoors;
                 @Screendoors.performed += instance.OnScreendoors;
                 @Screendoors.canceled += instance.OnScreendoors;
+                @FilmStrip.started += instance.OnFilmStrip;
+                @FilmStrip.performed += instance.OnFilmStrip;
+                @FilmStrip.canceled += instance.OnFilmStrip;
             }
         }
     }
@@ -290,5 +318,6 @@ public class @InputMap : IInputActionCollection, IDisposable
     public interface IDebugActions
     {
         void OnScreendoors(InputAction.CallbackContext context);
+        void OnFilmStrip(InputAction.CallbackContext context);
     }
 }
