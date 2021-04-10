@@ -10,7 +10,7 @@ public class MobsterScript : EnemyScript
 
     #region References
     //Reference to player script, could be put in abstract class
-    //Reference to camera, can be in abstract class
+    
     #endregion
 
     #region Properties
@@ -19,15 +19,19 @@ public class MobsterScript : EnemyScript
     #endregion
 
     // Start is called before the first frame update
-    void Start()
+    protected override void Start()
     {
+        base.Start();
+        
         //Set variables to starting values
-
+        
     }
 
     // Update is called once per frame
-    void Update()
+    protected override void Update()
     {
+        base.Update();
+
         //Call attack and movement if on screen
         if(OnScreen)
         {
@@ -49,7 +53,7 @@ public class MobsterScript : EnemyScript
         {
             if(true) //Test if player is near/lined up
             {
-                //Attack, spawn a bullet
+                //Attack, spawn a bullset
 
                 //Reset attack cooldown
                 attackCooldown = MAX_CD;
