@@ -13,22 +13,37 @@ public abstract class EnemyScript : MonoBehaviour
 
     protected bool OnScreen;
 
+    //Position
+    protected Vector3 position;
+
     #endregion
+
+    #region References
+    [SerializeReference] protected Player player;
+    protected Camera cam;
+    protected float camHalfWidth;
+    protected float camHalfHeight;
+    #endregion
+
 
     #region Properties
     public int Health { get { return health; } set { health = value; } }
     #endregion
 
     // Start is called before the first frame update
-    void Start()
+    protected virtual void Start()
     {
-        
+        cam = Camera.main;
+        camHalfHeight = cam.orthographicSize;
+        camHalfWidth = camHalfHeight * cam.aspect;
+        position = transform.position;
     }
 
     // Update is called once per frame
-    void Update()
+    protected virtual void Update()
     {
-        
+        transform.position = position;
+        WithinCamera();
     }
 
     private void FixedUpdate()
@@ -59,5 +74,22 @@ public abstract class EnemyScript : MonoBehaviour
     {
         health -= damage;
     }
+
+
+    #region HelperMethods
+    protected void WithinCamera()
+    {
+        //Testing if the enemy position is within the screen bounds
+        if(position.x > cam.transform.position.x - camHalfWidth && position.x < cam.transform.position.x + camHalfWidth &&
+            position.y > cam.transform.position.y - camHalfHeight && position.y < cam.transform.position.y + camHalfHeight)
+        {
+            OnScreen = true;
+        }
+        else
+        {
+            OnScreen = false;
+        }
+    }
+    #endregion
 
 }
