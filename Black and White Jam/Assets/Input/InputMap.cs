@@ -125,6 +125,33 @@ public class @InputMap : IInputActionCollection, IDisposable
                     ""isPartOfComposite"": true
                 }
             ]
+        },
+        {
+            ""name"": ""Debug"",
+            ""id"": ""49e5f4dc-00e3-4199-9921-eda4415337de"",
+            ""actions"": [
+                {
+                    ""name"": ""Screen doors"",
+                    ""type"": ""Button"",
+                    ""id"": ""3cd7dc3a-5ecc-48a7-a1d3-00d179a36d03"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""bd63b7f7-2859-48c9-b79d-2668702ed8fe"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Screen doors"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": []
@@ -133,6 +160,9 @@ public class @InputMap : IInputActionCollection, IDisposable
         m_Gameplay = asset.FindActionMap("Gameplay", throwIfNotFound: true);
         m_Gameplay_Jump = m_Gameplay.FindAction("Jump", throwIfNotFound: true);
         m_Gameplay_Move = m_Gameplay.FindAction("Move", throwIfNotFound: true);
+        // Debug
+        m_Debug = asset.FindActionMap("Debug", throwIfNotFound: true);
+        m_Debug_Screendoors = m_Debug.FindAction("Screen doors", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -219,9 +249,46 @@ public class @InputMap : IInputActionCollection, IDisposable
         }
     }
     public GameplayActions @Gameplay => new GameplayActions(this);
+
+    // Debug
+    private readonly InputActionMap m_Debug;
+    private IDebugActions m_DebugActionsCallbackInterface;
+    private readonly InputAction m_Debug_Screendoors;
+    public struct DebugActions
+    {
+        private @InputMap m_Wrapper;
+        public DebugActions(@InputMap wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Screendoors => m_Wrapper.m_Debug_Screendoors;
+        public InputActionMap Get() { return m_Wrapper.m_Debug; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(DebugActions set) { return set.Get(); }
+        public void SetCallbacks(IDebugActions instance)
+        {
+            if (m_Wrapper.m_DebugActionsCallbackInterface != null)
+            {
+                @Screendoors.started -= m_Wrapper.m_DebugActionsCallbackInterface.OnScreendoors;
+                @Screendoors.performed -= m_Wrapper.m_DebugActionsCallbackInterface.OnScreendoors;
+                @Screendoors.canceled -= m_Wrapper.m_DebugActionsCallbackInterface.OnScreendoors;
+            }
+            m_Wrapper.m_DebugActionsCallbackInterface = instance;
+            if (instance != null)
+            {
+                @Screendoors.started += instance.OnScreendoors;
+                @Screendoors.performed += instance.OnScreendoors;
+                @Screendoors.canceled += instance.OnScreendoors;
+            }
+        }
+    }
+    public DebugActions @Debug => new DebugActions(this);
     public interface IGameplayActions
     {
         void OnJump(InputAction.CallbackContext context);
         void OnMove(InputAction.CallbackContext context);
+    }
+    public interface IDebugActions
+    {
+        void OnScreendoors(InputAction.CallbackContext context);
     }
 }

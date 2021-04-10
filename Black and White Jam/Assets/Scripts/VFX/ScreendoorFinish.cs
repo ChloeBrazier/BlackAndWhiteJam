@@ -1,20 +1,21 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class ScreendoorFinish : MonoBehaviour
 {
     //left and right screen objects
-    public GameObject leftScreen;
-    public GameObject rightScreen;
+    [SerializeField] private GameObject leftScreen;
+    [SerializeField] private GameObject rightScreen;
 
     //start position transforms
-    public Transform leftScreenStartPos;
+    [SerializeField] private Transform leftScreenStartPos;
     public Transform rightScreenStartPos;
 
     //final position transforms
-    public Transform leftScreenFinalPos;
-    public Transform rightScreenFinalPos;
+    [SerializeField] private Transform leftScreenFinalPos;
+    [SerializeField] private Transform rightScreenFinalPos;
 
     //bool to check if the doors are closed
     private bool doorsClosed = false;
@@ -22,30 +23,55 @@ public class ScreendoorFinish : MonoBehaviour
     //closing and opening time
     public float doorTime;
 
+    //intensity for the close
+    public float closeIntensity;
+
+    //debug input map 
+    private InputMap debugScreens;
+
+    //bool to check if doors are moving
+    private bool doorsMoving = false;
+
+    private void Awake()
+    {
+        debugScreens = new InputMap();
+    }
+
+    private void OnEnable()
+    {
+        debugScreens.Enable();
+    }
+
+    private void OnDisable()
+    {
+        debugScreens.Disable();
+    }
+
     // Start is called before the first frame update
     void Start()
     {
-        
+        debugScreens.Debug.Screendoors.started += MoveDoors;
     }
 
     // Update is called once per frame
     void Update()
     {
-        //debug screen doors closing
-        //if(Input.GetKeyDown(KeyCode.E))
-        //{
-        //    if(doorsClosed == false)
-        //    {
-        //        //start sliding the doors closed
-        //        StartCoroutine(CloseDoors());
-        //    }
-        //    else
-        //    {
-        //        //start sliding the doors open
-        //        StartCoroutine(OpenDoors());
-        //    }
-            
-        //}
+
+    }
+
+    public void MoveDoors(InputAction.CallbackContext ctx)
+    {
+        if (doorsMoving) return;
+        if (doorsClosed == false)
+        {
+            //start sliding the doors closed
+            StartCoroutine(CloseDoors());
+        }
+        else
+        {
+            //start sliding the doors open
+            StartCoroutine(OpenDoors());
+        }
     }
 
     /// <summary>
@@ -54,6 +80,9 @@ public class ScreendoorFinish : MonoBehaviour
     /// <returns></returns>
     public IEnumerator CloseDoors()
     {
+        //doors are moving
+        doorsMoving = true;
+
         //temp vectors for screen door positions
         Vector3 tempLeft = leftScreen.transform.position;
         Vector3 tempRight = rightScreen.transform.position;
@@ -73,9 +102,10 @@ public class ScreendoorFinish : MonoBehaviour
         }
 
         //shake the screen 
-        CameraShake.instance.ShakeCamera(2.0f, 0.1f);
+        CameraShake.instance.ShakeCamera(closeIntensity, 0.1f);
 
-        //doors are now closed
+        //doors are now closed and stationary
+        doorsMoving = false;
         doorsClosed = true;
     }
 
@@ -85,6 +115,9 @@ public class ScreendoorFinish : MonoBehaviour
     /// <returns></returns>
     public IEnumerator OpenDoors()
     {
+        //doors are moving
+        doorsMoving = true;
+
         //temp vectors for screen door positions
         Vector3 tempLeft = leftScreen.transform.position;
         Vector3 tempRight = rightScreen.transform.position;
@@ -103,7 +136,8 @@ public class ScreendoorFinish : MonoBehaviour
             yield return null;
         }
 
-        //doors are now open
+        //doors are now open and stationary
+        doorsMoving = false;
         doorsClosed = false;
     }
 }
